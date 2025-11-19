@@ -5,6 +5,20 @@
 
 A portable C library for calculating Indonesian taxes (PPh 21/22/23/26, PPh Final Pasal 4(2), PPN, PPnBM) with complete calculation transparency.
 
+## ⚠️ Warning: Early Development
+
+**This library is currently in early alpha stage (v0.1a) and was developed through rapid prototyping ("vibe coding").**
+
+**Known Limitations:**
+- ⚠️ **Not all features have been thoroughly tested** - While the core PPh21 calculations have been validated, many edge cases and other tax types (PPh22, PPh23, PPh 4(2), PPN, PPNBM) have limited testing coverage
+- ⚠️ **Not production-ready** - This library should NOT be used for actual tax filing or financial reporting without thorough validation
+- ⚠️ **API may change** - Breaking changes may occur in future versions as the library matures
+- ⚠️ **Regulatory accuracy** - Tax calculations are based on 2024 regulations but may not cover all scenarios or interpretations
+
+**Use at your own risk.** This library is provided for educational and prototyping purposes. Always verify calculations with official tax regulations and consult with tax professionals for production use.
+
+**Contributions welcome!** If you find bugs or have test cases, please open an issue or PR at https://github.com/kadcom/pphc
+
 ## Features
 
 - **Multi-tax support**: PPh 21/26, PPh 22, PPh 23, PPh Final Pasal 4(2), PPN, PPnBM
