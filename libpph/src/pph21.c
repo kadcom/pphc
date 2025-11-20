@@ -19,12 +19,15 @@ static int clamp_months(int months) {
    Pegawai Tetap (Permanent Employee)
    ============================================ */
 
+#define __BONUS_NAME_STR_LEN (256)
+#define __NOTE_STR_LEN (__BONUS_NAME_STR_LEN * 2)
+
 static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
     pph_result_t *result;
     int months;
     pph_money_t bruto_tahun, iuran_tahun, biaya_jabatan, netto_setahun;
     pph_money_t ptkp, pkp_rounded, pajak_setahun;
-    char note[128];
+    char note[__NOTE_STR_LEN];
 
     result = pph_result_create();
     if (!result) {
@@ -123,7 +126,7 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
                 if (has_bonus) {
                     /* Show bonus month separately */
                     pph_money_t ter_rate = pph_get_ter_bulanan_rate(input->ter_category, monthly_income[i]);
-                    char bonus_names[256] = "";
+                    char bonus_names[__BONUS_NAME_STR_LEN] = "";
 
                     /* Collect bonus names for this month */
                     {
