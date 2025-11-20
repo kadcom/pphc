@@ -4,13 +4,7 @@
  */
 
 #include <pph/pph_calculator.h>
-
-extern pph_result_t* pph_result_create(void);
-extern int pph_result_add_section(pph_result_t *result, const char *label);
-extern int pph_result_add_currency(pph_result_t *result, const char *label, pph_money_t value, const char *note);
-extern int pph_result_add_percent(pph_result_t *result, const char *label, pph_money_t percent, const char *note);
-extern int pph_result_add_total(pph_result_t *result, const char *label, pph_money_t value);
-extern void pph_set_last_error(const char *error);
+#include "pph_internal.h"
 
 pph_result_t* pph22_calculate(const pph22_input_t *input) {
     pph_result_t *result;

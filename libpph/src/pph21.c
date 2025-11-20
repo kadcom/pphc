@@ -4,21 +4,9 @@
  */
 
 #include <pph/pph_calculator.h>
+#include "pph_internal.h"
 #include <string.h>
 #include <stdio.h>
-
-/* Forward declarations */
-extern pph_money_t pph_get_ptkp(pph_ptkp_status_t status);
-extern pph_money_t pph_calculate_pasal17(pph_money_t pkp);
-extern pph_money_t pph_get_ter_bulanan_rate(pph21_ter_category_t category, pph_money_t bruto_monthly);
-extern pph_money_t pph_get_ter_harian_rate(pph21_ter_category_t category, pph_money_t bruto);
-extern pph_result_t* pph_result_create(void);
-extern int pph_result_add_section(pph_result_t *result, const char *label);
-extern int pph_result_add_currency(pph_result_t *result, const char *label, pph_money_t value, const char *note);
-extern int pph_result_add_percent(pph_result_t *result, const char *label, pph_money_t percent, const char *note);
-extern int pph_result_add_subtotal(pph_result_t *result, const char *label, pph_money_t value);
-extern int pph_result_add_total(pph_result_t *result, const char *label, pph_money_t value);
-extern void pph_set_last_error(const char *error);
 
 /* Helper: Clamp months to 1-12 */
 static int clamp_months(int months) {
