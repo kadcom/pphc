@@ -14,7 +14,7 @@ int main(void) {
     pph21_input_t input = {0};
     pph_result_t *result;
     char buffer[64];
-    int i;
+    pph_size_t i;
 
     /* Define bonuses */
     pph21_bonus_t bonuses[] = {
