@@ -137,7 +137,7 @@ int main(void) {
 
     /* Configure PPh21 calculation */
     input.subject_type = PPH21_PEGAWAI_TETAP;
-    input.bruto_monthly = PPH_RUPIAH(10000000);  /* 10 million IDR/month */
+    input.bruto_monthly.value = PPH_INT64_C(100000000000);  /* 10,000,000 */
     input.months_paid = 12;
     input.ptkp_status = PPH_PTKP_TK0;
     input.scheme = PPH21_SCHEME_TER;
@@ -197,7 +197,7 @@ int main(void) {
     printf("-------------------------------------\n");
 
     /* Calculate with different salary */
-    input.bruto_monthly = PPH_RUPIAH(50000000);  /* 50 million IDR/month */
+    input.bruto_monthly.value = PPH_INT64_C(500000000000);  /* 50,000,000 */
     printf("\nCalculating PPh21 for 50M IDR/month...\n");
 
     result = pph21_calculate(&input);

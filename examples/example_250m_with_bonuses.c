@@ -9,6 +9,7 @@
 
 #include <pph/pph_calculator.h>
 #include <stdio.h>
+#include <string.h>
 
 int main(void) {
     pph21_input_t input = {0};
@@ -17,19 +18,24 @@ int main(void) {
     pph_size_t i;
 
     /* Define bonuses */
-    pph21_bonus_t bonuses[] = {
-        {3, PPH_RUPIAH(250000000), "THR"},
-        {4, PPH_RUPIAH(100000000), "Bonus Tahunan"}
-    };
+    pph21_bonus_t bonuses[2];
+
+    bonuses[0].month = 3;
+    bonuses[0].amount.value = PPH_INT64_C(2500000000000);  /* 250,000,000 */
+    strcpy(bonuses[0].name, "THR");
+
+    bonuses[1].month = 4;
+    bonuses[1].amount.value = PPH_INT64_C(1000000000000);  /* 100,000,000 */
+    strcpy(bonuses[1].name, "Bonus Tahunan");
 
     pph_init();
 
     /* Configure calculation */
     input.subject_type = PPH21_PEGAWAI_TETAP;
-    input.bruto_monthly = PPH_RUPIAH(250000000);     /* 250 million IDR per month */
+    input.bruto_monthly.value = PPH_INT64_C(2500000000000);  /* 250,000,000 */
     input.months_paid = 12;
-    input.pension_contribution = PPH_RUPIAH(100000); /* 100k IDR per month */
-    input.zakat_or_donation = PPH_ZERO;
+    input.pension_contribution.value = PPH_INT64_C(1000000000);  /* 100,000 */
+    input.zakat_or_donation.value = 0;
     input.ptkp_status = PPH_PTKP_K2;                 /* Married with 2 dependents */
     input.scheme = PPH21_SCHEME_TER;                 /* Use TER scheme */
     input.ter_category = PPH21_TER_CATEGORY_B;       /* With NPWP */
