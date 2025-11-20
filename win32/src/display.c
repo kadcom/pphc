@@ -46,35 +46,55 @@ void DisplaySummary(HWND hwnd, pph_result_t* result)
     /* December balance (simplified) */
     SetDlgItemText(hwnd, IDC_STATIC_DEC_BALANCE, "Rp 0");
 
-    /* Calculate Take-Home Pay from breakdown */
-    /* Look for "Take-home setahun" and "Take-home per masa" in breakdown */
+    /* Calculate Take-Home Pay directly from bruto and tax */
+    /* THP = Total Bruto - Total Tax */
     {
-        pph_money_t thpAnnual = PPH_ZERO;
-        pph_money_t thpMonthly = PPH_ZERO;
+        pph_money_t brutoAnnual = PPH_ZERO;
+        pph_money_t thpAnnual, thpMonthly;
         pph_size_t i;
+        int months = 12;
 
+        /* Find total bruto from breakdown - search more broadly */
         for (i = 0; i < result->breakdown_count; i++) {
             pph_breakdown_row_t *row = &result->breakdown[i];
-
-            if (strstr(row->label, "Take-home setahun") != NULL) {
-                thpAnnual = row->value;
-            } else if (strstr(row->label, "Take-home per masa") != NULL) {
-                thpMonthly = row->value;
+            /* Look for any variation of "bruto" total */
+            if ((strstr(row->label, "bruto") != NULL && strstr(row->label, "Total") != NULL) ||
+                strstr(row->label, "Total bruto") != NULL ||
+                strstr(row->label, "bruto setahun") != NULL ||
+                strstr(row->label, "Gaji pokok") != NULL) {
+                /* Take the largest value as total bruto */
+                if (pph_money_cmp(row->value, brutoAnnual) > 0) {
+                    brutoAnnual = row->value;
+                }
             }
         }
 
-        /* If found, display them */
-        if (pph_money_cmp(thpAnnual, PPH_ZERO) != 0) {
-            FormatRupiah(thpAnnual, buffer, sizeof(buffer));
-            SetDlgItemText(hwnd, IDC_STATIC_THP_ANNUAL, buffer);
-        } else {
-            SetDlgItemText(hwnd, IDC_STATIC_THP_ANNUAL, "Rp 0");
+        /* If still not found, try to get from penghasilan */
+        if (pph_money_cmp(brutoAnnual, PPH_ZERO) == 0) {
+            for (i = 0; i < result->breakdown_count; i++) {
+                pph_breakdown_row_t *row = &result->breakdown[i];
+                if (strstr(row->label, "Penghasilan") != NULL &&
+                    pph_money_cmp(row->value, PPH_ZERO) > 0) {
+                    if (pph_money_cmp(row->value, brutoAnnual) > 0) {
+                        brutoAnnual = row->value;
+                    }
+                }
+            }
         }
 
-        if (pph_money_cmp(thpMonthly, PPH_ZERO) != 0) {
+        /* If we found bruto, calculate THP */
+        if (pph_money_cmp(brutoAnnual, PPH_ZERO) > 0) {
+            /* THP = Bruto - Tax */
+            thpAnnual = pph_money_sub(brutoAnnual, result->total_tax);
+            thpMonthly = pph_money_div(thpAnnual, months);
+
+            FormatRupiah(thpAnnual, buffer, sizeof(buffer));
+            SetDlgItemText(hwnd, IDC_STATIC_THP_ANNUAL, buffer);
+
             FormatRupiah(thpMonthly, buffer, sizeof(buffer));
             SetDlgItemText(hwnd, IDC_STATIC_THP_MONTHLY, buffer);
         } else {
+            SetDlgItemText(hwnd, IDC_STATIC_THP_ANNUAL, "Rp 0");
             SetDlgItemText(hwnd, IDC_STATIC_THP_MONTHLY, "Rp 0");
         }
     }

@@ -151,7 +151,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         0,                              /* Extended styles */
         MAIN_WINDOW_CLASS,              /* Class name */
         APP_TITLE,                      /* Window title */
-        WS_OVERLAPPEDWINDOW,            /* Window style */
+        WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,  /* Window style with clipping */
         windowX, windowY,               /* Position */
         windowWidth, windowHeight,      /* Size */
         NULL,                           /* Parent window */

@@ -172,10 +172,10 @@ void CreateResultsControls(HWND hwndParent, RECT* rcPanel)
     y += LABEL_HEIGHT + 8;
 
     /* Total PPh 21/26 */
-    CreateLabel(hwndParent, "Total PPh 21/26:", rcPanel->left, y, 150);
+    CreateLabel(hwndParent, "Total PPh 21/26:", rcPanel->left, y, 180);
     CreateWindowEx(0, "STATIC", "Rp 0",
         WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        rcPanel->left + 150, y, 200, LABEL_HEIGHT,
+        rcPanel->left + 180, y, panelWidth - 180, LABEL_HEIGHT,
         hwndParent, (HMENU)(UINT_PTR)IDC_STATIC_TOTAL_TAX,
         GetModuleHandle(NULL), NULL);
     SendDlgItemMessage(hwndParent, IDC_STATIC_TOTAL_TAX, WM_SETFONT,
@@ -183,10 +183,10 @@ void CreateResultsControls(HWND hwndParent, RECT* rcPanel)
     y += LABEL_HEIGHT + 4;
 
     /* TER bulanan */
-    CreateLabel(hwndParent, "TER bulanan:", rcPanel->left, y, 150);
+    CreateLabel(hwndParent, "TER bulanan:", rcPanel->left, y, 180);
     CreateWindowEx(0, "STATIC", "Rp 0",
         WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        rcPanel->left + 150, y, 200, LABEL_HEIGHT,
+        rcPanel->left + 180, y, panelWidth - 180, LABEL_HEIGHT,
         hwndParent, (HMENU)(UINT_PTR)IDC_STATIC_TER_MONTHLY,
         GetModuleHandle(NULL), NULL);
     SendDlgItemMessage(hwndParent, IDC_STATIC_TER_MONTHLY, WM_SETFONT,
@@ -194,10 +194,10 @@ void CreateResultsControls(HWND hwndParent, RECT* rcPanel)
     y += LABEL_HEIGHT + 4;
 
     /* Kurang bayar Desember */
-    CreateLabel(hwndParent, "Kurang bayar Desember:", rcPanel->left, y, 150);
+    CreateLabel(hwndParent, "Kurang bayar Desember:", rcPanel->left, y, 180);
     CreateWindowEx(0, "STATIC", "Rp 0",
         WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        rcPanel->left + 150, y, 200, LABEL_HEIGHT,
+        rcPanel->left + 180, y, panelWidth - 180, LABEL_HEIGHT,
         hwndParent, (HMENU)(UINT_PTR)IDC_STATIC_DEC_BALANCE,
         GetModuleHandle(NULL), NULL);
     SendDlgItemMessage(hwndParent, IDC_STATIC_DEC_BALANCE, WM_SETFONT,
@@ -209,10 +209,10 @@ void CreateResultsControls(HWND hwndParent, RECT* rcPanel)
     y += LABEL_HEIGHT + 8;
 
     /* THP setahun */
-    CreateLabel(hwndParent, "THP setahun:", rcPanel->left, y, 150);
+    CreateLabel(hwndParent, "THP setahun:", rcPanel->left, y, 180);
     CreateWindowEx(0, "STATIC", "Rp 0",
         WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        rcPanel->left + 150, y, 200, LABEL_HEIGHT,
+        rcPanel->left + 180, y, panelWidth - 180, LABEL_HEIGHT,
         hwndParent, (HMENU)(UINT_PTR)IDC_STATIC_THP_ANNUAL,
         GetModuleHandle(NULL), NULL);
     SendDlgItemMessage(hwndParent, IDC_STATIC_THP_ANNUAL, WM_SETFONT,
@@ -220,10 +220,10 @@ void CreateResultsControls(HWND hwndParent, RECT* rcPanel)
     y += LABEL_HEIGHT + 4;
 
     /* THP per masa */
-    CreateLabel(hwndParent, "THP per masa:", rcPanel->left, y, 150);
+    CreateLabel(hwndParent, "THP per masa:", rcPanel->left, y, 180);
     CreateWindowEx(0, "STATIC", "Rp 0",
         WS_CHILD | WS_VISIBLE | SS_RIGHT,
-        rcPanel->left + 150, y, 200, LABEL_HEIGHT,
+        rcPanel->left + 180, y, panelWidth - 180, LABEL_HEIGHT,
         hwndParent, (HMENU)(UINT_PTR)IDC_STATIC_THP_MONTHLY,
         GetModuleHandle(NULL), NULL);
     SendDlgItemMessage(hwndParent, IDC_STATIC_THP_MONTHLY, WM_SETFONT,

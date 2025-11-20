@@ -68,6 +68,7 @@ void FormatRupiah(pph_money_t money, char* buffer, size_t size);
 void FormatRupiahWithLabel(pph_money_t money, char* buffer, size_t size);
 void FormatPercent(pph_money_t percent, char* buffer, size_t size);
 pph_money_t ParseRupiah(const char* str);
+int ParseIntSafe(const char* str, int defaultValue);
 void FormatThousandSeparator(const char* input, char* output, size_t outSize);
 void RemoveThousandSeparator(const char* input, char* output, size_t outSize);
 void GetEditMoneyValue(HWND hwnd, int controlId, pph_money_t* outValue);

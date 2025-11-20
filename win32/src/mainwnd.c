@@ -6,6 +6,10 @@
 #include "../include/pphcalc.h"
 #include <stdio.h>
 
+/* Global brushes for control backgrounds */
+static HBRUSH g_hWindowBrush = NULL;
+static HBRUSH g_hEditBrush = NULL;
+
 /*
  * MainWndProc - Main window procedure
  */
@@ -29,10 +33,16 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             return 0;
 
         case WM_CTLCOLORSTATIC:
+            /* Set cream background for all static controls */
+            SetBkColor((HDC)wParam, COLOR_WINDOW_BG);
+            SetTextColor((HDC)wParam, COLOR_TEXT_PRIMARY);
+            return (LRESULT)g_hWindowBrush;
+
         case WM_CTLCOLOREDIT:
-            /* Set background color for edit and static controls */
-            SetBkMode((HDC)wParam, TRANSPARENT);
-            return (LRESULT)GetStockObject(NULL_BRUSH);
+            /* Set subtle light gray background for edit controls */
+            SetBkColor((HDC)wParam, RGB(248, 248, 248));
+            SetTextColor((HDC)wParam, COLOR_TEXT_PRIMARY);
+            return (LRESULT)g_hEditBrush;
 
         case WM_DESTROY:
             OnDestroy(hwnd);
@@ -50,6 +60,11 @@ LRESULT CALLBACK MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 void OnCreate(HWND hwnd)
 {
     RECT rcClient;
+
+    /* Create background brushes */
+    g_hWindowBrush = CreateSolidBrush(COLOR_WINDOW_BG);
+    /* Subtle light gray for edit controls - indicates editable */
+    g_hEditBrush = CreateSolidBrush(RGB(248, 248, 248));
 
     /* Get client area */
     GetClientRect(hwnd, &rcClient);
@@ -110,8 +125,7 @@ void OnPaint(HWND hwnd)
 {
     PAINTSTRUCT ps;
     HDC hdc;
-    RECT rcClient, rcHeader, rcTab;
-    int tabX, tabWidth;
+    RECT rcClient, rcHeader;
 
     hdc = BeginPaint(hwnd, &ps);
 
@@ -123,41 +137,33 @@ void OnPaint(HWND hwnd)
     rcHeader.top = 0;
     rcHeader.right = rcClient.right;
     rcHeader.bottom = HEADER_HEIGHT;
-    DrawCustomHeader(hdc, &rcHeader);
 
-    /* Draw tab buttons */
-    tabWidth = 90;
-    tabX = 220;  /* Start after app title */
+    /* Fill header background */
+    {
+        HBRUSH hBrush = CreateSolidBrush(COLOR_HEADER_BG);
+        FillRect(hdc, &rcHeader, hBrush);
+        DeleteObject(hBrush);
+    }
 
-    /* PPh 21/26 tab (active) */
-    rcTab.left = tabX;
-    rcTab.top = 10;
-    rcTab.right = rcTab.left + tabWidth;
-    rcTab.bottom = rcTab.top + 36;
-    DrawTabButton(hdc, &rcTab, "PPh 21/26", TRUE);
-    tabX = rcTab.right + 4;
+    /* Draw title */
+    {
+        HFONT hOldFont;
+        COLORREF oldTextColor;
+        int oldBkMode;
+        RECT rcText = rcHeader;
 
-    /* PPh 22 tab (inactive) */
-    rcTab.left = tabX;
-    rcTab.right = rcTab.left + tabWidth;
-    DrawTabButton(hdc, &rcTab, "PPh 22", FALSE);
-    tabX = rcTab.right + 4;
+        oldBkMode = SetBkMode(hdc, TRANSPARENT);
+        oldTextColor = SetTextColor(hdc, COLOR_HEADER_TEXT);
+        hOldFont = (HFONT)SelectObject(hdc, g_appState.hFontHeader);
 
-    /* PPh 23 tab (inactive) */
-    rcTab.left = tabX;
-    rcTab.right = rcTab.left + tabWidth;
-    DrawTabButton(hdc, &rcTab, "PPh 23", FALSE);
-    tabX = rcTab.right + 4;
+        rcText.left += MARGIN;
+        DrawText(hdc, "OpenPajak PPH 21 Calculator", -1, &rcText,
+                 DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
-    /* PPh 4(2) tab (inactive) */
-    rcTab.left = tabX;
-    rcTab.right = rcTab.left + tabWidth;
-    DrawTabButton(hdc, &rcTab, "PPh 4(2)", FALSE);
-
-    /* Draw "About" button on the right */
-    rcTab.left = rcClient.right - 100 - MARGIN;
-    rcTab.right = rcClient.right - MARGIN;
-    DrawTabButton(hdc, &rcTab, "About", FALSE);
+        SelectObject(hdc, hOldFont);
+        SetTextColor(hdc, oldTextColor);
+        SetBkMode(hdc, oldBkMode);
+    }
 
     EndPaint(hwnd, &ps);
 }
@@ -185,6 +191,13 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
             }
             break;
 
+        case IDC_CMB_TER_CATEGORY:
+            /* TER category changed */
+            if (codeNotify == CBN_SELCHANGE) {
+                PerformCalculation(hwnd);
+            }
+            break;
+
         case IDC_EDIT_BRUTO:
         case IDC_EDIT_MONTHS:
         case IDC_EDIT_PENSION:
@@ -192,7 +205,6 @@ void OnCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
         case IDC_EDIT_ZAKAT:
         case IDC_CMB_SUBJECT:
         case IDC_CMB_PTKP:
-        case IDC_CMB_TER_CATEGORY:
             /* Input changed - recalculate */
             if (codeNotify == EN_CHANGE || codeNotify == CBN_SELCHANGE) {
                 PerformCalculation(hwnd);
@@ -249,4 +261,8 @@ void OnDestroy(HWND hwnd)
     SAFE_DELETE_OBJECT(g_appState.hFontLabel);
     SAFE_DELETE_OBJECT(g_appState.hFontAmount);
     SAFE_DELETE_OBJECT(g_appState.hFontNormal);
+
+    /* Delete brushes */
+    SAFE_DELETE_OBJECT(g_hWindowBrush);
+    SAFE_DELETE_OBJECT(g_hEditBrush);
 }
