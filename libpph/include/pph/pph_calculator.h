@@ -243,8 +243,8 @@ PPH_EXPORT const char* pph_get_version(void);
      pph_set_custom_allocator(NULL, NULL, NULL);
    ============================================ */
 PPH_EXPORT void pph_set_custom_allocator(
-    void* (*malloc_fn)(size_t size),
-    void* (*realloc_fn)(void* ptr, size_t size),
+    void* (*malloc_fn)(pph_size_t size),
+    void* (*realloc_fn)(void* ptr, pph_size_t size),
     void  (*free_fn)(void* ptr)
 );
 

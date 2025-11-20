@@ -17,12 +17,12 @@
    ============================================ */
 
 /* Default allocator using standard library */
-static void* default_malloc(size_t size) {
-    return malloc(size);
+static void* default_malloc(pph_size_t size) {
+    return malloc((size_t)size);
 }
 
-static void* default_realloc(void* ptr, size_t size) {
-    return realloc(ptr, size);
+static void* default_realloc(void* ptr, pph_size_t size) {
+    return realloc(ptr, (size_t)size);
 }
 
 static void default_free(void* ptr) {
@@ -40,8 +40,8 @@ static const pph_allocator_t *current_allocator = &default_allocator;
 
 /* Set custom allocator */
 void pph_set_custom_allocator(
-    void* (*malloc_fn)(size_t),
-    void* (*realloc_fn)(void*, size_t),
+    void* (*malloc_fn)(pph_size_t),
+    void* (*realloc_fn)(void*, pph_size_t),
     void  (*free_fn)(void*)
 ) {
     static pph_allocator_t custom_allocator;
@@ -60,11 +60,11 @@ void pph_set_custom_allocator(
 }
 
 /* Allocator wrapper functions */
-void* pph_malloc(size_t size) {
+void* pph_malloc(pph_size_t size) {
     return current_allocator->malloc_fn(size);
 }
 
-void* pph_realloc(void* ptr, size_t size) {
+void* pph_realloc(void* ptr, pph_size_t size) {
     return current_allocator->realloc_fn(ptr, size);
 }
 
@@ -86,7 +86,7 @@ pph_result_t* pph_result_create(void) {
         return NULL;
     }
 
-    result->total_tax = PPH_ZERO;
+    result->total_tax.value = 0;
     result->breakdown_count = 0;
     result->breakdown_capacity = INITIAL_BREAKDOWN_CAPACITY;
 
@@ -180,7 +180,9 @@ int pph_result_add_row(pph_result_t *result,
 }
 
 int pph_result_add_section(pph_result_t *result, const char *label) {
-    return pph_result_add_row(result, label, PPH_ZERO, PPH_VALUE_TEXT, NULL, PPH_BREAKDOWN_SECTION);
+    pph_money_t zero;
+    zero.value = 0;
+    return pph_result_add_row(result, label, zero, PPH_VALUE_TEXT, NULL, PPH_BREAKDOWN_SECTION);
 }
 
 int pph_result_add_currency(pph_result_t *result, const char *label, pph_money_t value, const char *note) {
@@ -200,7 +202,9 @@ int pph_result_add_total(pph_result_t *result, const char *label, pph_money_t va
 }
 
 int pph_result_add_spacer(pph_result_t *result) {
-    return pph_result_add_row(result, "", PPH_ZERO, PPH_VALUE_TEXT, NULL, PPH_BREAKDOWN_SPACER);
+    pph_money_t zero;
+    zero.value = 0;
+    return pph_result_add_row(result, "", zero, PPH_VALUE_TEXT, NULL, PPH_BREAKDOWN_SPACER);
 }
 
 /* ============================================

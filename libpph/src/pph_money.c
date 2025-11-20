@@ -270,10 +270,12 @@ char* pph_percent_to_string(pph_money_t percent, char *buffer, pph_size_t size) 
 }
 
 pph_money_t pph_money_from_string(const char *str) {
-    pph_money_t result = PPH_ZERO;
+    pph_money_t result;
     pph_int64_t whole = 0, frac = 0;
     int negative = 0;
     const char *p = str;
+
+    result.value = 0;
 
     if (str == NULL) {
         return result;
@@ -323,10 +325,12 @@ pph_money_t pph_money_from_string(const char *str) {
 }
 
 pph_money_t pph_money_from_string_id(const char *str) {
-    pph_money_t result = PPH_ZERO;
+    pph_money_t result;
     pph_int64_t whole = 0, frac = 0;
     int negative = 0;
     const char *p = str;
+
+    result.value = 0;
 
     if (str == NULL) {
         return result;
@@ -358,7 +362,9 @@ pph_money_t pph_money_from_string_id(const char *str) {
             break;
         } else {
             /* Invalid character */
-            return PPH_ZERO;
+            pph_money_t zero;
+            zero.value = 0;
+            return zero;
         }
     }
 

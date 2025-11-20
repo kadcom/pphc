@@ -92,10 +92,10 @@ int main(int argc, char *argv[]) {
 
         memset(&input, 0, sizeof(input));
         input.subject_type = PPH21_PEGAWAI_TETAP;
-        input.bruto_monthly = PPH_RUPIAH(10000000);
+        input.bruto_monthly.value = PPH_INT64_C(100000000000);  /* 10,000,000 */
         input.months_paid = 12;
-        input.pension_contribution = PPH_RUPIAH(100000);
-        input.zakat_or_donation = PPH_ZERO;
+        input.pension_contribution.value = PPH_INT64_C(1000000000);  /* 100,000 */
+        input.zakat_or_donation.value = 0;
         input.ptkp_status = PPH_PTKP_TK0;
         input.scheme = PPH21_SCHEME_TER;
         input.ter_category = PPH21_TER_CATEGORY_A;

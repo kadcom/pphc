@@ -133,8 +133,8 @@ pph_money_t pph_get_ter_harian_rate(pph21_ter_category_t category,
  * Allows library to work on platforms without standard malloc/free
  */
 typedef struct {
-    void* (*malloc_fn)(size_t size);          /* Allocate memory */
-    void* (*realloc_fn)(void* ptr, size_t size); /* Reallocate memory */
+    void* (*malloc_fn)(pph_size_t size);          /* Allocate memory */
+    void* (*realloc_fn)(void* ptr, pph_size_t size); /* Reallocate memory */
     void  (*free_fn)(void* ptr);              /* Free memory */
 } pph_allocator_t;
 
@@ -143,7 +143,7 @@ typedef struct {
  * @param size Number of bytes to allocate
  * @return Pointer to allocated memory, or NULL on failure
  */
-void* pph_malloc(size_t size);
+void* pph_malloc(pph_size_t size);
 
 /**
  * Reallocate memory using configured allocator
@@ -151,7 +151,7 @@ void* pph_malloc(size_t size);
  * @param size New size in bytes
  * @return Pointer to reallocated memory, or NULL on failure
  */
-void* pph_realloc(void* ptr, size_t size);
+void* pph_realloc(void* ptr, pph_size_t size);
 
 /**
  * Free memory using configured allocator

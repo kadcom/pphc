@@ -15,6 +15,7 @@ function(detect_compiler)
         add_compile_options(-ox)  # Optimize for speed
         add_compile_options(-w4)  # Warning level 4
         add_compile_options(-we)  # Warnings as errors
+        add_compile_options(-za99)  # Enable C99 support (compound literals, etc.)
 
     elseif(MSVC)
         message(STATUS "Detected MSVC compiler")
