@@ -4,6 +4,7 @@
  */
 
 #include <pph/pph_calculator.h>
+#include "pph_internal.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -12,13 +13,75 @@
 #define INITIAL_BREAKDOWN_CAPACITY 64
 
 /* ============================================
+   Custom Allocator Support
+   ============================================ */
+
+/* Default allocator using standard library */
+static void* default_malloc(size_t size) {
+    return malloc(size);
+}
+
+static void* default_realloc(void* ptr, size_t size) {
+    return realloc(ptr, size);
+}
+
+static void default_free(void* ptr) {
+    free(ptr);
+}
+
+static const pph_allocator_t default_allocator = {
+    default_malloc,
+    default_realloc,
+    default_free
+};
+
+/* Current allocator (points to default by default) */
+static const pph_allocator_t *current_allocator = &default_allocator;
+
+/* Set custom allocator */
+void pph_set_custom_allocator(
+    void* (*malloc_fn)(size_t),
+    void* (*realloc_fn)(void*, size_t),
+    void  (*free_fn)(void*)
+) {
+    static pph_allocator_t custom_allocator;
+
+    if (malloc_fn == NULL || realloc_fn == NULL || free_fn == NULL) {
+        /* Reset to default if any NULL */
+        current_allocator = &default_allocator;
+        return;
+    }
+
+    custom_allocator.malloc_fn = malloc_fn;
+    custom_allocator.realloc_fn = realloc_fn;
+    custom_allocator.free_fn = free_fn;
+
+    current_allocator = &custom_allocator;
+}
+
+/* Allocator wrapper functions */
+void* pph_malloc(size_t size) {
+    return current_allocator->malloc_fn(size);
+}
+
+void* pph_realloc(void* ptr, size_t size) {
+    return current_allocator->realloc_fn(ptr, size);
+}
+
+void pph_free(void* ptr) {
+    if (ptr != NULL) {
+        current_allocator->free_fn(ptr);
+    }
+}
+
+/* ============================================
    Result Management
    ============================================ */
 
 pph_result_t* pph_result_create(void) {
     pph_result_t *result;
 
-    result = (pph_result_t*)malloc(sizeof(pph_result_t));
+    result = (pph_result_t*)pph_malloc(sizeof(pph_result_t));
     if (result == NULL) {
         return NULL;
     }
@@ -27,11 +90,11 @@ pph_result_t* pph_result_create(void) {
     result->breakdown_count = 0;
     result->breakdown_capacity = INITIAL_BREAKDOWN_CAPACITY;
 
-    result->breakdown = (pph_breakdown_row_t*)malloc(
+    result->breakdown = (pph_breakdown_row_t*)pph_malloc(
         sizeof(pph_breakdown_row_t) * result->breakdown_capacity);
 
     if (result->breakdown == NULL) {
-        free(result);
+        pph_free(result);
         return NULL;
     }
 
@@ -44,10 +107,10 @@ void pph_result_free(pph_result_t *result) {
     }
 
     if (result->breakdown != NULL) {
-        free(result->breakdown);
+        pph_free(result->breakdown);
     }
 
-    free(result);
+    pph_free(result);
 }
 
 /* ============================================
@@ -64,7 +127,7 @@ static int pph_result_ensure_capacity(pph_result_t *result) {
 
     /* Double the capacity */
     new_capacity = result->breakdown_capacity * 2;
-    new_breakdown = (pph_breakdown_row_t*)realloc(
+    new_breakdown = (pph_breakdown_row_t*)pph_realloc(
         result->breakdown,
         sizeof(pph_breakdown_row_t) * new_capacity);
 

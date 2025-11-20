@@ -228,6 +228,26 @@ PPH_EXPORT void pph_init(void);
 PPH_EXPORT const char* pph_get_last_error(void);
 PPH_EXPORT const char* pph_get_version(void);
 
+/* ============================================
+   Custom Memory Allocator
+
+   For extreme portability on embedded/bare-metal platforms without malloc:
+   - Set custom allocator before any calculations
+   - Pass NULL to all three parameters to reset to default allocator
+   - All parameters must be non-NULL or all NULL
+
+   Example (embedded system with memory pool):
+     pph_set_custom_allocator(my_malloc, my_realloc, my_free);
+
+   Example (reset to default):
+     pph_set_custom_allocator(NULL, NULL, NULL);
+   ============================================ */
+PPH_EXPORT void pph_set_custom_allocator(
+    void* (*malloc_fn)(size_t size),
+    void* (*realloc_fn)(void* ptr, size_t size),
+    void  (*free_fn)(void* ptr)
+);
+
 #ifdef __cplusplus
 }
 #endif

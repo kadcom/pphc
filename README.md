@@ -27,6 +27,7 @@ A portable C library for calculating Indonesian taxes (PPh 21/22/23/26, PPh Fina
 - **Multi-bonus support**: Flexible bonus system (THR, performance bonuses, etc.) with accurate TER calculation per month
 - **Extreme portability**: Runs on DOS (OpenWatcom), Windows (MSVC/MinGW), Linux, macOS, iOS, Android, and WebAssembly
 - **Zero dependencies**: Pure ANSI C with no external libraries
+- **Configurable allocator**: Custom memory allocator support for bare-metal/embedded systems without malloc
 - **Thread-safe**: No global state
 - **Framework support**: macOS/iOS frameworks with XCFramework support
 - **WebAssembly**: Run in web browsers with JavaScript/TypeScript bindings
@@ -158,6 +159,90 @@ result.use {
 ```
 
 See [android/README.md](android/README.md) for detailed Android documentation.
+
+## Custom Memory Allocator
+
+For extreme portability on embedded systems, bare-metal platforms, or custom memory management:
+
+### Basic Usage
+
+```c
+#include <pph/pph_calculator.h>
+
+// Define your custom allocator functions
+void* my_malloc(size_t size);
+void* my_realloc(void* ptr, size_t size);
+void my_free(void* ptr);
+
+int main(void) {
+    // Set custom allocator before any calculations
+    pph_init();
+    pph_set_custom_allocator(my_malloc, my_realloc, my_free);
+
+    // Calculations now use your custom allocator
+    pph21_input_t input = {0};
+    input.bruto_monthly = PPH_RUPIAH(10000000);
+    input.scheme = PPH21_SCHEME_TER;
+
+    pph_result_t *result = pph21_calculate(&input);
+    pph_result_free(result);
+
+    // Reset to default allocator
+    pph_set_custom_allocator(NULL, NULL, NULL);
+
+    return 0;
+}
+```
+
+### Use Cases
+
+**Embedded Systems:**
+```c
+// Fixed memory pool for resource-constrained devices
+unsigned char memory_pool[64 * 1024];
+size_t pool_offset = 0;
+
+void* pool_malloc(size_t size) {
+    if (pool_offset + size > sizeof(memory_pool)) return NULL;
+    void* ptr = &memory_pool[pool_offset];
+    pool_offset += (size + 7) & ~7;  // 8-byte align
+    return ptr;
+}
+```
+
+**Debugging/Tracking:**
+```c
+// Track all allocations for memory leak detection
+void* tracking_malloc(size_t size) {
+    void* ptr = malloc(size);
+    printf("ALLOC: %p (%zu bytes)\n", ptr, size);
+    return ptr;
+}
+```
+
+**WebAssembly:**
+```c
+// Use Emscripten's memory management
+pph_set_custom_allocator(
+    emscripten_builtin_malloc,
+    emscripten_builtin_realloc,
+    emscripten_builtin_free
+);
+```
+
+See `examples/custom_allocator.c` for complete examples including:
+- Tracking allocator with statistics
+- Fixed pool allocator
+- Multiple allocator switching
+
+### Memory Requirements
+
+Typical memory usage per calculation:
+- Result struct: ~200 bytes
+- Breakdown array: ~64 rows × 400 bytes = 25 KB (initial)
+- Total: ~25-30 KB per calculation
+
+Arrays grow dynamically (doubles when full), but most calculations use <20 breakdown rows.
 
 ## Platform Support
 
