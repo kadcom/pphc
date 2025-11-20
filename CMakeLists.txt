@@ -15,6 +15,7 @@ option(BUILD_STATIC_LIBS "Build static libraries" ON)
 option(BUILD_TESTS "Build test suite" ON)
 option(BUILD_EXAMPLES "Build example programs" ON)
 option(BUILD_CLI "Build command-line tool" ON)
+option(BUILD_WIN32_GUI "Build Win32 GUI application (Windows only)" OFF)
 
 # Android configuration (must be before other includes)
 if(ANDROID)
@@ -50,6 +51,10 @@ endif()
 
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
+endif()
+
+if(BUILD_WIN32_GUI AND WIN32)
+    add_subdirectory(win32)
 endif()
 
 # Installation configuration

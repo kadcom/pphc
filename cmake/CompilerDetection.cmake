@@ -20,9 +20,7 @@ function(detect_compiler)
     elseif(MSVC)
         message(STATUS "Detected MSVC compiler")
 
-        # MSVC-specific flags
-        add_compile_options(/W4)  # Warning level 4
-
+        # MSVC-specific flags (let CMake handle warning level)
         # Disable specific warnings
         add_compile_options(/wd4996)  # 'function': was declared deprecated
         add_compile_options(/wd4100)  # Unreferenced formal parameter
