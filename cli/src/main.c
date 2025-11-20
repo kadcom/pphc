@@ -9,30 +9,36 @@
 #include <pph/pph_calculator.h>
 
 static void print_version(void) {
-    printf("pphc version %s\n", pph_get_version());
-    printf("Indonesian Tax Calculator Library\n");
+    printf(
+        "pphc version %s\n"
+        "Indonesian Tax Calculator Library\n", 
+        pph_get_version());
 }
 
 static void print_usage(void) {
-    printf("Usage: pphc <command> [options]\n\n");
-    printf("Commands:\n");
-    printf("  pph21    Calculate PPh 21/26\n");
-    printf("  pph22    Calculate PPh 22\n");
-    printf("  pph23    Calculate PPh 23\n");
-    printf("  pph4-2   Calculate PPh Final Pasal 4(2)\n");
-    printf("  ppn      Calculate PPN\n");
-    printf("  ppnbm    Calculate PPnBM\n");
-    printf("  version  Show version information\n");
-    printf("  help     Show this help message\n");
+    printf(
+        "Usage: pphc <command> [options]\n\n"
+        "Commands:\n"
+        "  pph21    Calculate PPh 21/26\n"
+        "  pph22    Calculate PPh 22\n"
+        "  pph23    Calculate PPh 23\n"
+        "  pph4-2   Calculate PPh Final Pasal 4(2)\n"
+        "  ppn      Calculate PPN\n"
+        "  ppnbm    Calculate PPnBM\n"
+        "  version  Show version information\n"
+        "  help     Show this help message\n"
+    );
 }
 
 static void print_breakdown(pph_result_t *result) {
     char buf[64];
     pph_size_t i;
 
-    printf("\n========================================\n");
-    printf("  Tax Calculation Result\n");
-    printf("========================================\n\n");
+    printf(
+        "\n========================================\n"
+        "  Tax Calculation Result\n"
+        "========================================\n\n"
+    );
 
     for (i = 0; i < result->breakdown_count; i++) {
         pph_breakdown_row_t *row = &result->breakdown[i];
