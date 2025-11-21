@@ -19,8 +19,12 @@ static int clamp_months(int months) {
    Pegawai Tetap (Permanent Employee)
    ============================================ */
 
-#define __BONUS_NAME_STR_LEN (256)
-#define __NOTE_STR_LEN (__BONUS_NAME_STR_LEN * 2)
+#define __BONUS_NAMES_STR_LEN (256)
+#define __BONUS_NAMES_SEPARATOR (", ")
+#define __BONUS_NAMES_SEPARATOR_LEN \
+    (sizeof(__BONUS_NAMES_SEPARATOR) - 1)
+
+#define __NOTE_STR_LEN (__BONUS_NAMES_STR_LEN * 2)
 
 static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
     pph_result_t *result;
@@ -126,21 +130,22 @@ static pph_result_t* calculate_pegawai_tetap(const pph21_input_t *input) {
                 if (has_bonus) {
                     /* Show bonus month separately */
                     pph_money_t ter_rate = pph_get_ter_bulanan_rate(input->ter_category, monthly_income[i]);
-                    char bonus_names[__BONUS_NAME_STR_LEN] = "";
+                    char bonus_names[__BONUS_NAMES_STR_LEN] = "";
 
                     /* Collect bonus names for this month */
+                    int trim_begin = 0;
                     {
-                        int j, first = 1;
+                        int j;
                         for (j = 0; j < input->bonus_count; j++) {
                             if (input->bonuses[j].month == i + 1) {
-                                if (!first) strcat(bonus_names, ", ");
+                                strcat(bonus_names, __BONUS_NAMES_SEPARATOR);
                                 strcat(bonus_names, input->bonuses[j].name);
-                                first = 0;
+                                trim_begin = __BONUS_NAMES_SEPARATOR_LEN;
                             }
                         }
                     }
 
-                    snprintf(note, sizeof(note), "Bulan %d (%s)", i + 1, bonus_names);
+                    snprintf(note, sizeof(note), "Bulan %d (%s)", i + 1, bonus_names + trim_begin);
                     pph_result_add_currency(result, note, monthly_income[i], NULL);
                     pph_result_add_percent(result, "  Tarif TER", ter_rate, NULL);
                     pph_result_add_currency(result, "  PPh 21 TER", monthly_ter[i], NULL);
